@@ -15,7 +15,6 @@
 </template>
 
 <script>
-import axios from 'axios'
 export default {
   data () {
     return {
@@ -45,12 +44,12 @@ export default {
         if (!valid) {
           return false
         }
-        axios({
+        this.$axios({
           method: 'post',
           url: 'http://localhost:8888/api/private/v1/login',
           data: this.form
         }).then(res => {
-          const { meta, data } = res.data
+          const { meta, data } = res
           if (meta.status === 200) {
             // 储存token到本地存储
             localStorage.setItem('token', data.token)

@@ -2,7 +2,9 @@
   <el-container class="home">
     <el-header>
       <div class="logo"></div>
-      <div class="title"><h1>电商后台管理系统</h1></div>
+      <div class="title">
+        <h1>电商后台管理系统</h1>
+      </div>
       <div class="out">
         欢迎你！xxx
         <a href="javascript:;" @click="out">退出</a>
@@ -12,87 +14,75 @@
       <!-- 侧边栏 -->
       <el-aside width="200px">
         <el-menu
-      default-active="2"
-      class="el-menu-vertical-demo"
-      @open="handleOpen"
-      @close="handleClose"
-      background-color="#545c64"
-      text-color="#fff"
-      active-text-color="#ffd04b">
-      <el-submenu index="1">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>用户管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="1-1"><i class="el-icon-menu"></i>用户列表</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-       <el-submenu index="2">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>权限管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="2-1"><i class="el-icon-menu"></i>用户列表</el-menu-item>
-          <el-menu-item index="2-2"><i class="el-icon-menu"></i>权限列表</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-       <el-submenu index="3">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>商品管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="3-1"><i class="el-icon-menu"></i>商品列表</el-menu-item>
-          <el-menu-item index="3-2"><i class="el-icon-menu"></i>分类参数</el-menu-item>
-          <el-menu-item index="3-3"><i class="el-icon-menu"></i>商品分类</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-       <el-submenu index="4">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>订单管理</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="4-1"><i class="el-icon-menu"></i>订单列表</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-       <el-submenu index="5">
-        <template slot="title">
-          <i class="el-icon-location"></i>
-          <span>数据统计</span>
-        </template>
-        <el-menu-item-group>
-          <el-menu-item index="5-1"><i class="el-icon-menu"></i>数据报表</el-menu-item>
-        </el-menu-item-group>
-      </el-submenu>
-    </el-menu>
+          :default-active="active"
+          class="el-menu-vertical-demo"
+          background-color="#545c64"
+          text-color="#fff"
+          active-text-color="#ffd04b"
+          unique-opened
+          router
+        >
+        <!-- 一级菜单 -->
+          <el-submenu :index="oneItem.path" v-for="oneItem in homeList" :key="oneItem.id">
+            <template slot="title">
+              <i class="el-icon-location"></i>
+              <span>{{oneItem.authName}}</span>
+            </template>
+            <!-- 二级菜单栏 -->
+            <el-menu-item :index="twoItem.path" v-for="twoItem in oneItem.children" :key="twoItem.id">
+              <i class="el-icon-menu"></i>
+              <span slot="title">{{twoItem.authName}}</span>
+            </el-menu-item>
+          </el-submenu>
+        </el-menu>
       </el-aside>
-      <el-main>Main</el-main>
+      <el-main>
+        <!-- 组件出口 -->
+        <router-view> 123 </router-view>
+      </el-main>
     </el-container>
   </el-container>
 </template>
 
 <script>
 export default {
+  data () {
+    return {
+      homeList: ''
+    }
+  },
+  computed: {
+    // 截取地址栏的地址获取active
+    active () {
+      return this.$route.path.slice(1)
+    }
+  },
+  created () {
+    // 发送请求获取数据
+    this.$axios({
+      method: 'get',
+      url: '/menus'
+    }).then(res => {
+      const { meta, data } = res
+      if (meta.status === 200) {
+        this.homeList = data
+      }
+    })
+  },
   methods: {
+    // 退出功能
     out () {
       // 弹出提示框
-      this.$confirm('你真的确认退出？', '温馨提示', { type: 'earning' }).then(() => {
-        // 删除本地token
-        localStorage.removeItem('token')
-        this.$router.push('/login')
-        this.$message.success('退出成功')
-      }).catch(() => {
-        this.$message.info('取消退出')
-      })
-    },
-    handleOpen (key, keyPath) {
-      console.log(key, keyPath)
-    },
-    handleClose (key, keyPath) {
-      console.log(key, keyPath)
+      this.$confirm('你真的确认退出？', '温馨提示', { type: 'earning' })
+        .then(() => {
+          // 删除本地token
+          localStorage.removeItem('token')
+          this.$router.push('/login')
+          this.$message.success('退出成功')
+        })
+        .catch(() => {
+          this.$message.info('取消退出')
+        })
     }
   }
 }
@@ -113,7 +103,7 @@ export default {
       height: 100%;
     }
     .logo {
-      background: url('../assets/logo.png') no-repeat center center;
+      background: url("../assets/logo.png") no-repeat center center;
       background-size: contain;
     }
     .out {
@@ -132,6 +122,11 @@ export default {
 
   .el-aside {
     background-color: #545c64;
+
+    .el-submenu__title,
+    .el-submenu {
+      width: 200px;
+    }
   }
 
   .el-main {
