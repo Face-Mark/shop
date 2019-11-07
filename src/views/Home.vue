@@ -57,32 +57,30 @@ export default {
       return this.$route.path.slice(1)
     }
   },
-  created () {
+  async created () {
     // 发送请求获取数据
-    this.$axios({
-      method: 'get',
-      url: '/menus'
-    }).then(res => {
-      const { meta, data } = res
-      if (meta.status === 200) {
-        this.homeList = data
-      }
-    })
+    // const { meta, data } = await this.$axios({
+    //   method: 'get',
+    //   url: '/menus'
+    // })
+    const { meta, data } = await this.$axios.get('/menus')
+    if (meta.status === 200) {
+      this.homeList = data
+    }
   },
   methods: {
     // 退出功能
-    out () {
+    async out () {
       // 弹出提示框
-      this.$confirm('你真的确认退出？', '温馨提示', { type: 'earning' })
-        .then(() => {
-          // 删除本地token
-          localStorage.removeItem('token')
-          this.$router.push('/login')
-          this.$message.success('退出成功')
-        })
-        .catch(() => {
-          this.$message.info('取消退出')
-        })
+      await this.$confirm('你真的确认退出？', '温馨提示', { type: 'earning' })
+      try {
+        // 删除本地token
+        localStorage.removeItem('token')
+        this.$router.push('/login')
+        this.$message.success('退出成功')
+      } catch {
+        this.$message.info('取消退出')
+      }
     }
   }
 }

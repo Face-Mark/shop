@@ -34,6 +34,12 @@ const router = new VueRouter({
   ]
 })
 
+// 解决路由重复点击的问题
+const originalPush = VueRouter.prototype.push
+VueRouter.prototype.push = function push (location) {
+  return originalPush.call(this, location).catch(err => err)
+}
+
 // 路由拦截
 router.beforeEach(function (to, from, next) {
   // 判断是否去login

@@ -1,5 +1,5 @@
 <template>
-  <el-form ref="form" :model="form" label-width="80px" :rules="rules" status-icon>
+  <el-form ref="form" :model="form" label-width="80px" :rules="rules" status-icon class="login-form">
     <img src="../assets/avatar.jpg" alt />
     <el-form-item label="用户名" prop="username">
       <el-input v-model="form.username" placeholder="请输入用户名"></el-input>
@@ -40,26 +40,25 @@ export default {
   methods: {
     // 表单登陆
     onSubmit () {
-      this.$refs.form.validate((valid) => {
+      this.$refs.form.validate(async (valid) => {
         if (!valid) {
           return false
         }
-        this.$axios({
-          method: 'post',
-          url: 'http://localhost:8888/api/private/v1/login',
-          data: this.form
-        }).then(res => {
-          const { meta, data } = res
-          if (meta.status === 200) {
-            // 储存token到本地存储
-            localStorage.setItem('token', data.token)
-            // 跳转页面
-            this.$router.push('home')
-          } else {
-            // 提示错信息
-            this.$message.error(meta.msg)
-          }
-        })
+        // const { meta, data } = await this.$axios({
+        //   method: 'post',
+        //   url: 'http://localhost:8888/api/private/v1/login',
+        //   data: this.form
+        // })
+        const { meta, data } = await this.$axios.post('/login', this.form)
+        if (meta.status === 200) {
+          // 储存token到本地存储
+          localStorage.setItem('token', data.token)
+          // 跳转页面
+          this.$router.push('home')
+        } else {
+          // 提示错信息
+          this.$message.error(meta.msg)
+        }
       })
     },
     // 表单重置
@@ -70,11 +69,10 @@ export default {
 }
 </script>
 
-<style lang="less">
+<style lang="less" scoped>
 body {
-  background: #2d434c;
 
-  .el-form {
+  .login-form {
     width: 400px;
     padding: 75px 40px 15px;
     margin: 200px auto;
