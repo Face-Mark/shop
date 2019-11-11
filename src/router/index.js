@@ -1,13 +1,14 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import Home from '../views/Home.vue'
-import Login from '../views/Login.vue'
-import Users from '../views/users/Users.vue'
-import Roles from '../views/rights/Roles.vue'
-import Goods from '../views/production/Goods.vue'
-import Params from '../views/production/Params.vue'
-import Rights from '../views/rights/Rights.vue'
-import Categories from '../views/production/Categories.vue'
+// 异步组件
+const Home = () => import(/* webpackChunkName: "home" */ '../views/Home.vue')
+const Login = () => import(/* webpackChunkName: "login" */ '../views/Login.vue')
+const Users = () => import(/* webpackChunkName: "user" */ '../views/users/Users.vue')
+const Roles = () => import(/* webpackChunkName: "right" */ '../views/rights/Roles.vue')
+const Goods = () => import(/* webpackChunkName: "production" */ '../views/production/Goods.vue')
+const Params = () => import(/* webpackChunkName: "production" */ '../views/production/Params.vue')
+const Rights = () => import(/* webpackChunkName: "right" */ '../views/rights/Rights.vue')
+const Categories = () => import(/* webpackChunkName: "production" */ '../views/production/Categories.vue')
 
 Vue.use(VueRouter)
 
