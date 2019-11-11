@@ -4,10 +4,16 @@ import router from './router'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 import axios from 'axios'
+import moment from 'moment'
 
 Vue.use(ElementUI)
 
 Vue.config.productionTip = false
+
+// 注册时间过滤器
+Vue.filter('time-moment', function (value) {
+  return moment(value).format('YYYY-MM-DD HH:mm:ss')
+})
 
 // 将axios添加到vue实例上
 Vue.prototype.$axios = axios
